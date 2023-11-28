@@ -4,57 +4,72 @@ class AppointmentSystem
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Doctors Appointment Management System");
-        Console.WriteLine("Enter your role (Admin/Doctor/Patient): ");
-        string userRole = Console.ReadLine().ToLower();
-
-        switch (userRole)
+        while (true)
         {
-            case "admin":
-                AdminInterface();
-                break;
-            case "doctor":
-                DoctorInterface();
-                break;
-            case "patient":
-                PatientInterface();
-                break;
-            default:
-                Console.WriteLine("Invalid role");
-                break;
+            Console.WriteLine("\nDoctors Appointment Management System");
+            Console.WriteLine("Enter your role (Admin/Doctor/Patient) or 'exit' to quit: ");
+            string userRole = Console.ReadLine().ToLower();
+
+            if (userRole == "exit") break;
+
+            switch (userRole)
+            {
+                case "admin":
+                    AdminInterface();
+                    break;
+                case "doctor":
+                    DoctorInterface();
+                    break;
+                case "patient":
+                    PatientInterface();
+                    break;
+                default:
+                    Console.WriteLine("Invalid role");
+                    break;
+            }
         }
     }
+
     static void AdminInterface()
     {
-        Console.WriteLine("Admin Interface");
-        Console.WriteLine("1. Add Patient");
-        Console.WriteLine("2. Update Patient");
-        Console.WriteLine("3. Delete Patient");
-        Console.WriteLine("4. View All Patients");
-        // Similar options for Doctors, Appointments, and Staff
-        Console.WriteLine("Enter your choice: ");
-        string choice = Console.ReadLine();
-
-        switch (choice)
+        while (true)
         {
-            case "1":
-                AddPatient();
-                break;
-            case "2":
-                UpdatePatient();
-                break;
-            case "3":
-                DeletePatient();
-                break;
-            case "4":
-                ViewAllPatients();
-                break;
-            // Implement other cases similarly
-            default:
-                Console.WriteLine("Invalid choice");
-                break;
+            Console.WriteLine("\nAdmin Interface");
+            Console.WriteLine("1. Add Patient");
+            Console.WriteLine("2. Update Patient");
+            Console.WriteLine("3. Delete Patient");
+            Console.WriteLine("4. View All Patients");
+            Console.WriteLine("5. Count Appointments per Doctor");
+            Console.WriteLine("6. Return to Main Menu");
+            Console.WriteLine("Enter your choice: ");
+            string choice = Console.ReadLine();
+
+            if (choice == "6") break;
+
+            switch (choice)
+            {
+                case "1":
+                    AddPatient();
+                    break;
+                case "2":
+                    UpdatePatient();
+                    break;
+                case "3":
+                    DeletePatient();
+                    break;
+                case "4":
+                    ViewAllPatients();
+                    break;
+                case "5":
+                    CountAppointmentsPerDoctor();
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice");
+                    break;
+            }
         }
     }
+
 
     static void AddPatient()
     {
@@ -216,32 +231,75 @@ class AppointmentSystem
             }
         }
     }
+    static void CountAppointmentsPerDoctor()
+    {
+        string connectionString = "server=localhost;port=3306;database=doctorsappointment;user=root;password=root;";
+        string query = @"SELECT d.Name, COUNT(a.AppointmentID) AS NumberOfAppointments 
+                     FROM Doctors d 
+                     LEFT JOIN Appointments a ON d.DoctorID = a.DoctorID 
+                     GROUP BY d.DoctorID";
+
+        try
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    connection.Open();
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (!reader.HasRows)
+                        {
+                            Console.WriteLine("No appointment data found.");
+                            return;
+                        }
+
+                        Console.WriteLine("Appointments per Doctor:");
+                        while (reader.Read())
+                        {
+                            Console.WriteLine($"Doctor: {reader["Name"]}, Appointments: {reader["NumberOfAppointments"]}");
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occurred: " + ex.Message);
+        }
+    }
+
 
 
 
     static void DoctorInterface()
     {
-        Console.WriteLine("Doctor Interface");
-        Console.WriteLine("1. View Appointments");
-        Console.WriteLine("2. Update Appointment");
-        // Additional options as needed
-        Console.WriteLine("Enter your choice: ");
-        string choice = Console.ReadLine();
-
-        switch (choice)
+        while (true)
         {
-            case "1":
-                ViewAppointments();
-                break;
-            case "2":
-                UpdateAppointment();
-                break;
-            // Additional cases as needed
-            default:
-                Console.WriteLine("Invalid choice");
-                break;
+            Console.WriteLine("\nDoctor Interface");
+            Console.WriteLine("1. View Appointments");
+            Console.WriteLine("2. Update Appointment");
+            Console.WriteLine("3. Return to Main Menu");
+            Console.WriteLine("Enter your choice: ");
+            string choice = Console.ReadLine();
+
+            if (choice == "3") break;
+
+            switch (choice)
+            {
+                case "1":
+                    ViewAppointments();
+                    break;
+                case "2":
+                    UpdateAppointment();
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice");
+                    break;
+            }
         }
     }
+
 
     static void ViewAppointments()
     {
@@ -331,33 +389,40 @@ class AppointmentSystem
         }
     }
 
-   
+
 
     static void PatientInterface()
     {
-        Console.WriteLine("Patient Interface");
-        Console.WriteLine("1. Book Appointment");
-        Console.WriteLine("2. View My Appointments");
-        Console.WriteLine("3. Cancel Appointment");
-        Console.WriteLine("Enter your choice: ");
-        string choice = Console.ReadLine();
-
-        switch (choice)
+        while (true)
         {
-            case "1":
-                BookAppointment();
-                break;
-            case "2":
-                ViewMyAppointments();
-                break;
-            case "3":
-                CancelAppointment();
-                break;
-            default:
-                Console.WriteLine("Invalid choice");
-                break;
+            Console.WriteLine("\nPatient Interface");
+            Console.WriteLine("1. Book Appointment");
+            Console.WriteLine("2. View My Appointments");
+            Console.WriteLine("3. Cancel Appointment");
+            Console.WriteLine("4. Return to Main Menu");
+            Console.WriteLine("Enter your choice: ");
+            string choice = Console.ReadLine();
+
+            if (choice == "4") break;
+
+            switch (choice)
+            {
+                case "1":
+                    BookAppointment();
+                    break;
+                case "2":
+                    ViewMyAppointments();
+                    break;
+                case "3":
+                    CancelAppointment();
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice");
+                    break;
+            }
         }
     }
+
 
     static void BookAppointment()
     {
